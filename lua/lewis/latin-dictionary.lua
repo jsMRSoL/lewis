@@ -1,7 +1,7 @@
 local text_win, vocab_win -- dict_win,
 local text_buf, dict_buf, vocab_buf
 local layout_set = false
-local json_ok, lunajson = pcall(require, "lunajson")
+local json_ok, lunajson = pcall(require, "lewis.lunajson")
 if not json_ok then
   print("Could not load lunajson")
   return
@@ -81,7 +81,7 @@ end
 
 function latin_funcs.async_get_entry(cmd, current_word)
   local entries = {}
-  print(cmd)
+  -- print(cmd)
   local function onread_out(err, data)
     if err then
       print("Error: ", err)
@@ -122,7 +122,7 @@ end
 
 function latin_funcs.get_line_entries(opts)
   local line = vim.api.nvim_get_current_line()
-  print(line)
+  -- print(line)
   line = vim.fn.substitute(line, "[;:!,\\.]", "", "g")
 
   local level
@@ -170,14 +170,14 @@ function latin_funcs.create_layout()
     text_buf,
     "n",
     "<CR>",
-    ':lua require("latin-dictionary").lookup()' .. "<cr>",
+    ':lua require("lewis.latin-dictionary").lookup()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     text_buf,
     "n",
     "<s-CR>",
-    ':lua require("latin-dictionary").lookup(true)' .. "<cr>",
+    ':lua require("lewis.latin-dictionary").lookup(true)' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
 
@@ -189,14 +189,14 @@ function latin_funcs.create_layout()
     dict_buf,
     "n",
     "<CR>",
-    ':lua require("latin-dictionary").add_to_vocab()' .. "<cr>",
+    ':lua require("lewis.latin-dictionary").add_to_vocab()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     dict_buf,
     "n",
     "N",
-    ':lua require("latin-dictionary").next_entry()' .. "<cr>",
+    ':lua require("lewis.latin-dictionary").next_entry()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
 

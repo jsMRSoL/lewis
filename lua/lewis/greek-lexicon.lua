@@ -1,7 +1,7 @@
-local text_win, dict_win, vocab_win
+local text_win, vocab_win -- dict_win,
 local text_buf, dict_buf, vocab_buf
 local layout_set = false
-local json_ok, lunajson = pcall(require, "lunajson")
+local json_ok, lunajson = pcall(require, "lewis.lunajson")
 if not json_ok then
   print("Could not load lunajson")
   return
@@ -102,14 +102,14 @@ function greek_funcs.create_layout()
     text_buf,
     "n",
     "<CR>",
-    ':lua require("greek-lexicon").lookup()' .. "<cr>",
+    ':lua require("lewis.greek-lexicon").lookup()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     text_buf,
     "n",
     "<s-CR>",
-    ':lua require("greek-lexicon").lookup(true)' .. "<cr>",
+    ':lua require("lewis.greek-lexicon").lookup(true)' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
 
@@ -121,14 +121,14 @@ function greek_funcs.create_layout()
     dict_buf,
     "n",
     "<CR>",
-    ':lua require("greek-lexicon").add_to_vocab()' .. "<cr>",
+    ':lua require("lewis.greek-lexicon").add_to_vocab()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
   vim.api.nvim_buf_set_keymap(
     dict_buf,
     "n",
     "N",
-    ':lua require("greek-lexicon").next_entry()' .. "<cr>",
+    ':lua require("lewis.greek-lexicon").next_entry()' .. "<cr>",
     { nowait = true, noremap = true, silent = true }
   )
 
