@@ -1,11 +1,6 @@
 local text_win, vocab_win -- dict_win,
 local text_buf, dict_buf, vocab_buf
 local layout_set = false
-local json_ok, lunajson = pcall(require, "lewis.lunajson")
-if not json_ok then
-  print("Could not load lunajson")
-  return
-end
 local api = vim.api
 
 -- local test_json = '{\"lns\": [{\"head\":\"dominus\",\"orth_orig\":\"dŏmĭnus\",\"early_i_tags\":[\"a master\",\"possessor\",\"ruler\",\"lord\",\"proprietor\",\"owner\"],\"senses\":[{\"pos\":null,\"authors\":[\"Cato\",\"Cic.\",\"Hor.\",\"Non.\",\"Plaut.\",\"Quint.\",\"Sall.\",\"Suet.\",\"Ter.\",\"Varr.\",\"id.\"],\"i_tags\":[\"the young master\"]},{\"pos\":null,\"authors\":[\"Cic.\",\"Ov.\",\"Verg.\",\"id.\"],\"i_tags\":[\"a master\",\"lord\",\"ruler\",\"commander\",\"chief\",\"proprietor\",\"owner\",\"fin.\",\"the possessor of an art\"]},{\"pos\":\"adj.\",\"authors\":[\"Juv.\",\"Ov.\",\"Stat.\"],\"i_tags\":[\"<i>the auction spear\"]},{\"pos\":null,\"authors\":[],\"i_tags\":[]},{\"pos\":null,\"authors\":[\"Cic.\",\"Gell.\",\"Liv.\",\"Non.\"],\"i_tags\":[\"the master of a feast\",\"the entertainer\",\"host\"]},{\"pos\":null,\"authors\":[\"Cic.\",\"Plaut.\"],\"i_tags\":[\"The master of a play\",\"of public games; the employer\"]},{\"pos\":null,\"authors\":[\"Inscr. Orell.\",\"Mart.\",\"Phaedr.\",\"Suet.\",\"Tib.\"],\"i_tags\":[\"a title of the emperors\"]},{\"pos\":null,\"authors\":[\"Ov.\"],\"i_tags\":[\"A term of endearment in addressing a lover\"]},{\"pos\":null,\"authors\":[\"Mart.\",\"Sen.\",\"Suet.\"],\"i_tags\":[\"Sir\"]},{\"pos\":null,\"authors\":[\"Cic.\"],\"i_tags\":[\"A master\",\"assignee\"]},{\"pos\":null,\"authors\":[\"Oros.\",\"Vulg.\"],\"i_tags\":[\"the Lord\",\"fin.\"]}]}], \"gcse\": [[\"dominus, domini, m\",\"noun 2\",\"master\"]], \"clc\": [[\"dominus, domini, m.\",\"master\"]], \"asvocab\": [[\"dominus, domini, m\",\"noun 2\",\"master\"]], \"wwords\": [[\"dominus, domini\",\"NOUN\",\"2M\",\"owner, lord, master; the Lord; title for ecclesiastics/gentlemen;\"]]}'
@@ -139,7 +134,7 @@ function latin_funcs.get_line_entries(opts)
     .. line
   local entries_json_string = vim.fn.system(cmd)
 
-  local entries_json = lunajson.decode(entries_json_string)
+  local entries_json = vim.fn.json_decode(entries_json_string)
 
   local terms = vim.fn.split(line)
   local lines = {}
@@ -211,7 +206,7 @@ end
 
 function latin_funcs.extract_and_format(raw_json)
   local lines = {}
-  local json = lunajson.decode(raw_json)
+  local json =vim.fn.json_decode(raw_json)
   -- P(json)
   local gcse = json["gcse"]
   local asvocab = json["asvocab"]
@@ -276,7 +271,7 @@ function latin_funcs.format_lns_entries(entries_array, label)
         end
         table.insert(output, "#>Meanings: " .. table.concat(i_tags, ", "))
         local pos = sense["pos"]
-        if pos then
+        if pos ~= vim.NIL then
           table.insert(output, "  Pos: " .. pos)
         end
         local authors = sense["authors"]
