@@ -16,7 +16,7 @@ function greek_funcs.lookup(on_headword)
 
   -- dominos
   local entries_json = greek_funcs.get_entries(on_headword)
-  entries_json = vim.fn.substitute(entries_json, "\n", "", "g")
+  -- entries_json = vim.fn.substitute(entries_json, "\n", "", "g")
   -- print(dict_buf)
   -- api.nvim_buf_set_lines(dict_buf, 0, -1, true, { entries_json })
   -- clear buffer and add program output
@@ -28,23 +28,43 @@ function greek_funcs.get_entries(on_headword)
   -- on_headword = on_headword or false
   -- get word under cursor using <cword>
   local current_word
-  local entries
   local cmd
   if on_headword then
     current_word = vim.fn.input("Enter headword: ")
     cmd = "/home/simon/Projects/rust/greek-db/target/debug/query_headwords"
-      .. " "
-      .. current_word
+        .. " "
+        .. current_word
   else
     current_word = vim.fn.expand("<cword>")
     cmd = "/home/simon/Projects/rust/greek-db/target/debug/query"
-      .. " "
-      .. current_word
+        .. " "
+        .. current_word
   end
+  local output
+  local on_data = function(_, data, name)
+    if name == "stdout" then
+      output = data
+    end
+    if name == "stderr" then
+      if data[1] ~= "" then
+        vim.notify(vim.inspect(data))
+      end
+    end
+  end
+  vim.fn.jobwait({
+    vim.fn.jobstart(cmd, {
+      stdout_buffered = true,
+      stderr_buffered = true,
+      on_stdout = on_data,
+      on_stderr = on_data,
+    }),
+  })
   -- print(current_word)
   -- call external program
-  entries = vim.fn.system(cmd)
-  return entries
+  -- entries = vim.fn.system(cmd)
+  -- print("Printing entries...")
+  -- P(output)
+  return output[1]
 end
 
 function greek_funcs.get_line_entries(opts)
@@ -58,10 +78,10 @@ function greek_funcs.get_line_entries(opts)
   end
 
   local cmd = "/home/simon/Projects/rust/greek-db/target/debug/query_many"
-    .. " "
-    .. level
-    .. " "
-    .. line
+      .. " "
+      .. level
+      .. " "
+      .. line
   local entries_json_string = vim.fn.system(cmd)
 
   local entries_json = vim.fn.json_decode(entries_json_string)
