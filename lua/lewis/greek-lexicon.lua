@@ -37,7 +37,6 @@ function greek_funcs.get_entries(on_headword)
       .. current_word
   else
     current_word = vim.fn.expand("<cword>")
-    print(current_word)
     cmd = "/home/simon/Projects/rust/greek-db/target/debug/query"
       .. " "
       .. current_word
